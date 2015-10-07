@@ -14,12 +14,11 @@ def entropy(histogram):
     return -sum(num / total * math.log(num / total, 2) for num in
                 histogram.values() if num > 0)
 
+
 def decision_tree(filename, target_attribute):
     data = excel_to_dictionary(filename)
-    attributes_infogain = attribute_infogain(data, target_attribute)
-    best_attributes = sorted(attributes_infogain.items(), key=lambda x: \
-                             x[1])
-    attributes = [a[0] for a in best_attributes]
+    attributes = data[0].keys()
+    attributes.remove(target_attribute)
     return decision_tree_helper(data, target_attribute, attributes)
 
 
@@ -32,7 +31,12 @@ def decision_tree_helper(data, target_attribute, attributes):
         d = Counter(target_attribute_values)
         return d.most_common(1)[0][0]
     else:
-        curr_attr = attributes.pop()
+        attributes_infogain = attribute_infogain(data,
+                target_attribute, attributes)
+        curr_attr = max(attributes_infogain.keys(), key=lambda k: \
+                        attributes_infogain[k])
+        attributes = list(attributes)
+        attributes.remove(curr_attr)
         tree = {}
         decision = {curr_attr: tree}
         curr_attr_values = set(d[curr_attr] for d in data)
@@ -42,15 +46,12 @@ def decision_tree_helper(data, target_attribute, attributes):
                 tree[value] = decision_tree_helper(data_part,
                         target_attribute, attributes)
             else:
-                return target_attribute_values[0]
+                return None
     return decision
 
 
-def attribute_infogain(data, target_attribute):
+def attribute_infogain(data, target_attribute, attributes):
     target_attribute_values = set(d[target_attribute] for d in data)
-    attributes = data[0].keys()
-    attributes.remove(target_attribute)
-
     histogram = Counter(d[target_attribute] for d in data)
     information_before = len(data) * entropy(histogram)
 
