@@ -26,10 +26,11 @@ def decision_tree_helper(data, target_attribute, attributes):
     target_attribute_values = [d[target_attribute] for d in data]
     if target_attribute_values.count(target_attribute_values[0]) \
         == len(target_attribute_values):
-        return target_attribute_values[0]
+        d = Counter(target_attribute_values)
+        return (target_attribute_values[0],d)
     if not attributes:
         d = Counter(target_attribute_values)
-        return d.most_common(1)[0][0]
+        return (d.most_common(1)[0][0],d)
     else:
         attributes_infogain = attribute_infogain(data,
                 target_attribute, attributes)
