@@ -4,7 +4,6 @@
 from collections import Counter
 import unittest
 import math
-import xlrd
 from IlyssasDataTools import excel_to_dictionary,pretty_tree
 
 def decision_tree(filename, target_attribute):
@@ -98,7 +97,4 @@ if __name__ == '__main__':
     # unittest.main()
 
     d = decision_tree('Tennis.xlsx', 'PlayTennis')
-
-    # print d
-
     pretty_tree(d)
